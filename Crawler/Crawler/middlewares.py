@@ -9,6 +9,9 @@ from scrapy import signals
 import random
 import json
 import codecs
+import requests
+import os
+import Tools.GetProxyIP
 from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware
 
 
@@ -16,16 +19,51 @@ class ProxyMiddleware(object):
     """ 随机更换 IP 代理 """
 
     proxy_list = []
-    with codecs.open('./Tools/proxyip.json', 'r', encoding='utf-8') as fp:
-        json_data = json.loads(fp.read())
-        for it in json_data:
-            proxy_list.append(it['ProxyIP'])
-    fp.close()
+
+    def load_proxy_list(self):
+        with codecs.open('./Tools/proxyip.json', 'r', encoding='utf-8') as fp:
+            json_data = json.loads(fp.read())
+            for it in json_data:
+                self.proxy_list.append(it)
+        fp.close()
 
     def process_request(self, request, spider):
+        self.load_proxy_list()
         ip = random.choice(self.proxy_list)
-        print(ip)
-        request.meta['proxy'] = ip
+        proxy = "HTTP://" + ip['IP'] + ":" + ip['Port']
+        cnt = 1
+        while os.system("ping -c 1 -W 2 " + ip['IP']) != 0 or Tools.GetProxyIP.checkProxyIP(
+                proxy) is False:
+            if cnt > 30:
+                break
+            else:
+                cnt += 1
+            print("\n")
+            print("Connect Timeout ......")
+            print(ip)
+            print("\n")
+            ip = random.choice(self.proxy_list)
+            proxy = "HTTP://" + ip['IP'] + ":" + ip['Port']
+
+        print("\n\n")
+        print("try " + str(cnt) + " time ......")
+        cnt = 1
+        print("\n\n")
+
+        if os.system("ping -c 1 -W 2 " + ip['IP']
+                     ) != 0 or Tools.GetProxyIP.checkProxyIP(proxy) is False:
+            Tools.GetProxyIP.getProxyIP(30)
+            self.proxy_list = []
+            self.load_proxy_list()
+            ip = random.choice(self.proxy_list)
+            proxy = "HTTP://" + ip['IP'] + ":" + ip['Port']
+        else:
+            print("\n")
+            print("Connect Success ......")
+            print(ip)
+            print("\n")
+
+        request.meta['proxy'] = proxy
 
 
 class RotateUserAgentMiddleware(UserAgentMiddleware):

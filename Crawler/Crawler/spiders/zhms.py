@@ -8,7 +8,7 @@ class ZhmsSpider(scrapy.Spider):
     allowed_domains = ['zhms.cn']
     start_url = 'http://www.zhms.cn/cp/_1_1'
     home_url = 'http://www.zhms.cn'
-    pageLimit = 3
+    pageLimit = 6000
     pageCnt = 1
 
     def start_requests(self):
@@ -25,14 +25,6 @@ class ZhmsSpider(scrapy.Spider):
         cateNameRegx = '/html/body/div[3]/div[3]/div[1]/ul/li/div[1]/a/text()'
         cateUrlRegx = '/html/body/div[3]/div[3]/div[1]/ul/li/a/@href'
 
-        # 获取下一页的链接并加入待爬取列表
-        nextUrls = response.xpath(nextUrlRegx).extract()
-        if nextUrls and self.pageCnt < self.pageLimit:
-            # 只爬取指定数目的页面
-            self.pageCnt += 1
-            nextUrl = self.home_url + nextUrls[0]
-            yield scrapy.Request(nextUrl, callback=self.cateList_parse)
-
         # 获取该页面所有的项目名字以及链接
         cateNames = response.xpath(cateNameRegx).extract()
         cateUrls = response.xpath(cateUrlRegx).extract()
@@ -44,6 +36,14 @@ class ZhmsSpider(scrapy.Spider):
                 CateList['cateName'] = cateName
                 CateList['cateUrl'] = self.home_url + cateUrl
                 yield CateList
+
+        # 获取下一页的链接并加入待爬取列表
+        nextUrls = response.xpath(nextUrlRegx).extract()
+        if nextUrls and self.pageCnt < self.pageLimit:
+            # 只爬取指定数目的页面
+            self.pageCnt += 1
+            nextUrl = self.home_url + nextUrls[0]
+            yield scrapy.Request(nextUrl, callback=self.cateList_parse)
 
     def parse(self, response):
         pass

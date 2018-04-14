@@ -3,18 +3,19 @@
 import json
 import requests
 import codecs
-import urllib
 import re
-
-ProxyIP = []
-fp = codecs.open('proxyip.json', 'w', encoding='utf-8')
 
 
 def getProxyIP(num):
     """ 通过API获取代理IP地址"""
 
-    api = 'http://piping.mogumiao.com/proxy/api/get_ip_al?appKey=8242cd21d1274112b8dbd8793e6f4876&count=' + str(
-        num) + '&expiryDate=0&format=1'
+    print("\n")
+    print("Update ProxyIP ......")
+    print("\n")
+
+    ProxyIP = []
+    fp = codecs.open('./Tools/proxyip.json', 'w', encoding='utf-8')
+    api = 'http://piping.mogumiao.com/proxy/api/get_ip_al?appKey=8242cd21d1274112b8dbd8793e6f4876&count=' + str(num) + '&expiryDate=5&format=1'
     response = requests.get(api)
     json_data = json.loads(response.text)
     results = json_data['msg']
@@ -24,7 +25,7 @@ def getProxyIP(num):
         port = result['port']
         proxyIP = str(ip) + ':' + str(port)
         if checkProxyIP(proxyIP):
-            it = {'ProxyIP': 'HTTP://' + proxyIP}
+            it = {'IP': ip, 'Port': port}
             ProxyIP.append(it)
 
     # 将有效的代理IP地址写入Json文件
@@ -37,7 +38,7 @@ def checkProxyIP(proxyIP):
 
     try:
         res = requests.get(
-            'https://www.ipip.net/', proxies={"http": proxyIP}, timeout=2)
+            'http://www.coffeexc.com/', proxies={"http": proxyIP}, timeout=2)
     except:
         print('Connect Failed http://' + proxyIP)
         return False
@@ -45,5 +46,5 @@ def checkProxyIP(proxyIP):
         print('Connect Success http://' + proxyIP)
         return True
 
-
-getProxyIP(30)
+if __name__ == "__main__":
+    getProxyIP(3)
