@@ -8,8 +8,10 @@ class ZhmsSpider(scrapy.Spider):
     allowed_domains = ['zhms.cn']
     start_url = 'http://www.zhms.cn/cp/_1_1'
     home_url = 'http://www.zhms.cn'
-    pageLimit = 6000
+    pageLimit = 6000   # 定义爬取页面数
     pageCnt = 1
+    print("\033[0;32m\t [ ------------ 爬虫程序启动成功 ------------ ] \033[0m")
+    print("\n 爬取页面目标: " + str(pageLimit) + "\n\n")
 
     def start_requests(self):
         """ 构造爬虫初始请求 """

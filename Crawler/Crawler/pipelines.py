@@ -39,20 +39,29 @@ class JsonPipleline(object):
 
 
 class MongoDBPipleline(object):
+    """ MongoDB 数据库存储管道 """
+
     def __init__(self):
+        """ 数据库初始化 """
+
+        # 链接数据库
         client = pymongo.MongoClient("localhost", 27017)
         db = client.Thesis
+
+        # 定义 CateList 集合
         self.CateList = db.CateList
 
     def process_item(self, item, spider):
         """ 判断item的类型，并作相应的处理 """
 
         if isinstance(item, Crawler.items.CateList):
+            # 美食列表数据存储
             try:
                 self.CateList.insert(dict(item))
             except Exception:
                 pass
         elif isinstance(item, Crawler.items.CateContent):
+            # 美食详情数据存储
             try:
                 pass
             except Exception:

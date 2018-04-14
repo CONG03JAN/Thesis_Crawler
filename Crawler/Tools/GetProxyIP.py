@@ -10,7 +10,7 @@ def getProxyIP(num):
     """ 通过API获取代理IP地址"""
 
     print("\n")
-    print("Update ProxyIP ......")
+    print("\033[0;32m\t [ ------------ 正在更新代理池 ------------ ] \033[0m")
     print("\n")
 
     ProxyIP = []
@@ -40,11 +40,16 @@ def checkProxyIP(proxyIP):
         res = requests.get(
             'http://www.coffeexc.com/', proxies={"http": proxyIP}, timeout=2)
     except:
+        print("\033[0;31m\t [ ------------ 失效IP代理 ------------ ] \033[0m")
         print('Connect Failed http://' + proxyIP)
         return False
     else:
+        print("\033[0;32m\t [ ------------ 有效IP代理 ------------ ] \033[0m")
         print('Connect Success http://' + proxyIP)
         return True
 
 if __name__ == "__main__":
+    print("\n")
+    print("\033[0;32m\t [ ------------ 代理池更新成功 ------------ ] \033[0m")
+    print("\n")
     getProxyIP(3)
