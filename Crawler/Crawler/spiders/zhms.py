@@ -1,0 +1,49 @@
+# -*- coding: utf-8 -*-
+import scrapy
+import Crawler.items
+
+
+class ZhmsSpider(scrapy.Spider):
+    name = 'zhms'
+    allowed_domains = ['zhms.cn']
+    start_url = 'http://www.zhms.cn/cp/_1_1'
+    home_url = 'http://www.zhms.cn'
+    pageLimit = 3
+    pageCnt = 1
+
+    def start_requests(self):
+        """ 构造爬虫初始请求 """
+        return [
+            scrapy.FormRequest(self.start_url, callback=self.cateList_parse)
+        ]
+
+    def cateList_parse(self, response):
+        """ 爬取每个页面的美食项目 """
+
+        # 构造需要数据的 XPath 表达式
+        nextUrlRegx = '//a[@class="m-page-next"]/@href'
+        cateNameRegx = '/html/body/div[3]/div[3]/div[1]/ul/li/div[1]/a/text()'
+        cateUrlRegx = '/html/body/div[3]/div[3]/div[1]/ul/li/a/@href'
+
+        # 获取下一页的链接并加入待爬取列表
+        nextUrls = response.xpath(nextUrlRegx).extract()
+        if nextUrls and self.pageCnt < self.pageLimit:
+            # 只爬取指定数目的页面
+            self.pageCnt += 1
+            nextUrl = self.home_url + nextUrls[0]
+            yield scrapy.Request(nextUrl, callback=self.cateList_parse)
+
+        # 获取该页面所有的项目名字以及链接
+        cateNames = response.xpath(cateNameRegx).extract()
+        cateUrls = response.xpath(cateUrlRegx).extract()
+
+        for (cateName, cateUrl) in zip(cateNames, cateUrls):
+            if cateName and cateUrl:
+                # 构造存储数据的 CateList Item
+                CateList = Crawler.items.CateList()
+                CateList['cateName'] = cateName
+                CateList['cateUrl'] = self.home_url + cateUrl
+                yield CateList
+
+    def parse(self, response):
+        pass

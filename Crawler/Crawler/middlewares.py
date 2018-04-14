@@ -6,6 +6,45 @@
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
+import random
+import json
+import codecs
+from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware
+
+
+class ProxyMiddleware(object):
+    """ 随机更换 IP 代理 """
+
+    proxy_list = []
+    with codecs.open('./Tools/proxyip.json', 'r', encoding='utf-8') as fp:
+        json_data = json.loads(fp.read())
+        for it in json_data:
+            proxy_list.append(it['ProxyIP'])
+    fp.close()
+
+    def process_request(self, request, spider):
+        ip = random.choice(self.proxy_list)
+        print(ip)
+        request.meta['proxy'] = ip
+
+
+class RotateUserAgentMiddleware(UserAgentMiddleware):
+    """ 随机更换 User-Agent """
+
+    def __init__(self, user_agent=''):
+        self.fp = codecs.open('./Tools/user_agents.json', 'r', encoding='utf-8')
+        self.user_agent = user_agent
+        json_data = json.loads(self.fp.read())
+        self.fp.close()
+        user_agent_list = []
+        for it in json_data:
+            user_agent_list.append(it['ua'])
+        self.user_agent_list = user_agent_list
+
+    def process_request(self, request, spider):
+        ua = random.choice(self.user_agent_list)
+        if ua:
+            request.headers.setdefault('User-Agent', ua)
 
 
 class CrawlerSpiderMiddleware(object):

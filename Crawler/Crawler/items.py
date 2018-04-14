@@ -8,7 +8,11 @@
 import scrapy
 
 
-class CrawlerItem(scrapy.Item):
+class CateList(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
+    cateName = scrapy.Field()
+    cateUrl = scrapy.Field()
+
+class CateContent(scrapy.Item):
     pass
