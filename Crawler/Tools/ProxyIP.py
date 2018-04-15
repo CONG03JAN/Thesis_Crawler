@@ -16,7 +16,8 @@ def getProxyIP(num):
     ProxyIP = []
     fp = codecs.open('./Tools/proxyip.json', 'w', encoding='utf-8')
     appKey = '78e9d532e0cc43d182bb3bb278ed0486'
-    api = 'http://piping.mogumiao.com/proxy/api/get_ip_bs?appKey=' + appKey + '&count=' + str(num) + '&expiryDate=0&format=1'
+    api = 'http://piping.mogumiao.com/proxy/api/get_ip_bs?appKey=' + appKey + '&count=' + num.encode(
+        'utf-8') + '&expiryDate=0&format=1'
     response = requests.get(api)
     json_data = json.loads(response.text)
     results = json_data['msg']
