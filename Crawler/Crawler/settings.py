@@ -70,7 +70,10 @@ ITEM_PIPELINES = {
     'Crawler.pipelines.CrawlerPipeline': 300,
     # 'Crawler.pipelines.JsonPipleline': 400,
     'Crawler.pipelines.MongoDBPipleline': 400,
+    'Crawler.pipelines.ImgPipeline': 500,
 }
+
+IMAGES_STORE = './Images'
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html

@@ -9,6 +9,10 @@ import Crawler.items
 import json
 import codecs
 import pymongo
+from scrapy.pipelines.images import ImagesPipeline
+from scrapy.exceptions import DropItem
+import scrapy
+from scrapy import log
 
 
 class CrawlerPipeline(object):
@@ -50,6 +54,7 @@ class MongoDBPipleline(object):
 
         # 定义 CateList 集合
         self.CateList = db.CateList
+        self.CateContent = db.CateContent
 
     def process_item(self, item, spider):
         """ 判断item的类型，并作相应的处理 """
@@ -63,8 +68,23 @@ class MongoDBPipleline(object):
         elif isinstance(item, Crawler.items.CateContent):
             # 美食详情数据存储
             try:
-                pass
+                self.CateContent.insert(dict(item))
             except Exception:
                 pass
 
+        return item
+
+
+class ImgPipeline(ImagesPipeline):
+    """ 图片存储管道定义 """
+
+    def get_media_requests(self, item, info):
+        for image_url in item['image_urls']:
+            yield scrapy.Request(image_url)
+
+    def item_completed(self, results, item, info):
+        image_paths = [x['path'] for ok, x in results if ok]  # ok判断是否下载成功
+        if not image_paths:
+            raise DropItem("Item contains no images")
+        item['image_paths'] = image_paths
         return item
