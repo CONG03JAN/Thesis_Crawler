@@ -4,13 +4,17 @@ import json
 import requests
 import codecs
 import re
+import sys
+import io
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 
 def getProxyIP(num):
     """ 通过API获取代理IP地址"""
 
     print("\n")
-    print(u"\033[0;32m\t [ ------------ 正在更新代理池 ------------ ] \033[0m")
+    print("\033[0;32m\t [ ------------ 正在更新代理池 ------------ ] \033[0m")
     print("\n")
 
     ProxyIP = []
@@ -26,17 +30,17 @@ def getProxyIP(num):
         port = result['port']
         proxyIP = str(ip) + ':' + str(port)
         if checkProxyIP(proxyIP):
-            print(u"\033[0;32m\t [ ------------ 有效IP代理: http://" + proxyIP + " ------------ ] \033[0m")
+            print("\033[0;32m\t [ ------------ 有效IP代理: http://" + proxyIP + " ------------ ] \033[0m")
             it = {'IP': ip, 'Port': port}
             ProxyIP.append(it)
         else:
-            print(u"\033[0;31m\t [ ------------ 失效IP代理: http://" + proxyIP + " ------------ ] \033[0m")
+            print("\033[0;31m\t [ ------------ 失效IP代理: http://" + proxyIP + " ------------ ] \033[0m")
 
     # 将有效的代理IP地址写入Json文件
     json.dump(ProxyIP, fp, ensure_ascii=False, indent=4)
     fp.close()
     print("\n")
-    print(u"\033[0;32m\t [ ------------ 代理池更新成功 ------------ ] \033[0m")
+    print("\033[0;32m\t [ ------------ 代理池更新成功 ------------ ] \033[0m")
     print("\n")
 
 
