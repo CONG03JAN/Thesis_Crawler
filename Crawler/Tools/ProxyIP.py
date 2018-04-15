@@ -15,7 +15,8 @@ def getProxyIP(num):
 
     ProxyIP = []
     fp = codecs.open('./Tools/proxyip.json', 'w', encoding='utf-8')
-    api = 'http://piping.mogumiao.com/proxy/api/get_ip_al?appKey=8242cd21d1274112b8dbd8793e6f4876&count=' + str(num) + '&expiryDate=5&format=1'
+    appKey = '8242cd21d1274112b8dbd8793e6f4876'
+    api = 'http://piping.mogumiao.com/proxy/api/get_ip_al?appKey=' + appKey + '&count=' + str(num) + '&expiryDate=5&format=1'
     response = requests.get(api)
     json_data = json.loads(response.text)
     results = json_data['msg']
@@ -25,31 +26,31 @@ def getProxyIP(num):
         port = result['port']
         proxyIP = str(ip) + ':' + str(port)
         if checkProxyIP(proxyIP):
+            print("\033[0;32m\t [ ------------ 有效IP代理: http://" + proxyIP + " ------------ ] \033[0m")
             it = {'IP': ip, 'Port': port}
             ProxyIP.append(it)
+        else:
+            print("\033[0;31m\t [ ------------ 失效IP代理: http://" + proxyIP + " ------------ ] \033[0m")
 
     # 将有效的代理IP地址写入Json文件
     json.dump(ProxyIP, fp, ensure_ascii=False, indent=4)
     fp.close()
+    print("\n")
+    print("\033[0;32m\t [ ------------ 代理池更新成功 ------------ ] \033[0m")
+    print("\n")
 
 
 def checkProxyIP(proxyIP):
     """ 检测代理IP地址是否有效 """
 
+    testUrl = 'http://ip.chinaz.com/getip.aspx'
+
     try:
-        res = requests.get(
-            'http://www.coffeexc.com/', proxies={"http": proxyIP}, timeout=2)
+        res = requests.get(testUrl, proxies={"http": proxyIP}, timeout=1.5)
     except:
-        print("\033[0;31m\t [ ------------ 失效IP代理 ------------ ] \033[0m")
-        print('Connect Failed http://' + proxyIP)
         return False
     else:
-        print("\033[0;32m\t [ ------------ 有效IP代理 ------------ ] \033[0m")
-        print('Connect Success http://' + proxyIP)
         return True
 
 if __name__ == "__main__":
-    print("\n")
-    print("\033[0;32m\t [ ------------ 代理池更新成功 ------------ ] \033[0m")
-    print("\n")
     getProxyIP(3)

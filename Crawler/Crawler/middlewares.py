@@ -10,8 +10,7 @@ import random
 import json
 import codecs
 import requests
-import os
-import Tools.GetProxyIP
+import Tools.ProxyIP
 from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware
 
 
@@ -40,39 +39,30 @@ class ProxyMiddleware(object):
         ipIsOk = True
 
         cnt = 1
-        while os.system("ping -c 1 -W 2 " + ip['IP']
-                        ) != 0 or Tools.GetProxyIP.checkProxyIP(proxy) is False:
-
+        while Tools.ProxyIP.checkProxyIP(proxy) is False:
             if cnt > 10:
                 ipIsOk = False
                 break
             else:
                 cnt += 1
 
-            print("\n")
-            print("\033[0;31m\t [ ------------ 代理IP " + str(ip) +
-                  " 连接超时 ------------ ] \033[0m")
-            print("\n")
+            print("\n\033[0;31m\t [ ------------ 代理IP " + str(ip) +
+                  " 连接超时 ------------ ] \033[0m\n")
             ip = random.choice(self.proxy_list)
             proxy = "HTTP://" + ip['IP'] + ":" + ip['Port']
 
-        print("\n\n")
-        print("\033[0;34m\t [ ------------ 代理IP选择尝试次数: " + str(cnt) +
-              " ------------ ] \033[0m")
-        cnt = 1
-        print("\n\n")
+        print("\n\033[0;34m\t [ ------------ 代理IP选择尝试次数: " + str(cnt) +
+              " ------------ ] \033[0m\n")
 
         if ipIsOk is False:
-            Tools.GetProxyIP.getProxyIP(10)
+            Tools.ProxyIP.getProxyIP(10)
             self.proxy_list = []
             self.load_proxy_list()
             ip = random.choice(self.proxy_list)
             proxy = "HTTP://" + ip['IP'] + ":" + ip['Port']
         else:
-            print("\n")
-            print("\033[0;32m\t [ ------------ 代理IP " + str(ip) +
-                  " 连接成功 ------------ ] \033[0m")
-            print("\n")
+            print("\n\033[0;32m\t [ ------------ 代理IP " + str(ip) +
+                  " 连接成功 ------------ ] \033[0m\n")
 
         request.meta['proxy'] = proxy
 
