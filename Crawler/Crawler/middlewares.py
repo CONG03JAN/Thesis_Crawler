@@ -12,6 +12,10 @@ import codecs
 import requests
 import Tools.ProxyIP
 from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware
+import sys
+import io
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 
 class ProxyMiddleware(object):

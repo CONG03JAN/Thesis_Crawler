@@ -3,6 +3,10 @@
 import json
 import codecs
 from fake_useragent import UserAgent
+import sys
+import io
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 
 def getUserAgent(num):

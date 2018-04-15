@@ -9,6 +9,10 @@ import Crawler.items
 import json
 import codecs
 import pymongo
+import sys
+import io
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 
 class CrawlerPipeline(object):
