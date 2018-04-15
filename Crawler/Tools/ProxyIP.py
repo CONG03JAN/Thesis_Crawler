@@ -4,10 +4,6 @@ import json
 import requests
 import codecs
 import re
-import sys
-import io
-
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 
 def getProxyIP(num):

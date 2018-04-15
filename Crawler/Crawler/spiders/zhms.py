@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import Crawler.items
-import sys
-import io
-
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 
 class ZhmsSpider(scrapy.Spider):
