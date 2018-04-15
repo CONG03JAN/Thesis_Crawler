@@ -6,7 +6,7 @@ import Crawler.items
 class ZhmsSpider(scrapy.Spider):
     name = 'zhms'
     allowed_domains = ['zhms.cn']
-    start_page_num = '74'
+    start_page_num = '268'
     start_url = 'http://www.zhms.cn/cp/_1_' + start_page_num
     home_url = 'http://www.zhms.cn'
     pageLimit = 6000   # 定义爬取页面数

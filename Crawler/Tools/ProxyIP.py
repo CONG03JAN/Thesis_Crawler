@@ -14,7 +14,6 @@ def getProxyIP(num):
     print("\n")
 
     ProxyIP = []
-    fp = codecs.open('./Tools/proxyip.json', 'w', encoding='utf-8')
     appKey = '78e9d532e0cc43d182bb3bb278ed0486'
     api = 'http://piping.mogumiao.com/proxy/api/get_ip_bs?appKey=' + appKey + '&count=' + str(num) + '&expiryDate=0&format=1'
     response = requests.get(api)
@@ -33,10 +32,15 @@ def getProxyIP(num):
             print("\033[0;31m\t [ ------------ 失效IP代理: http://" + proxyIP + " ------------ ] \033[0m")
 
     # 将有效的代理IP地址写入Json文件
-    json.dump(ProxyIP, fp, ensure_ascii=False, indent=4)
-    fp.close()
+    if ProxyIP:
+        print("\033[0;32m\t [ ------------ 代理池更新成功 ------------ ] \033[0m")
+        fp = codecs.open('./Tools/proxyip.json', 'w', encoding='utf-8')
+        json.dump(ProxyIP, fp, ensure_ascii=False, indent=4)
+        fp.close()
+    else:
+        print("\033[0;31m\t [ ------------ 代理池更新失败 ------------ ] \033[0m")
+
     print("\n")
-    print("\033[0;32m\t [ ------------ 代理池更新成功 ------------ ] \033[0m")
     print("\n")
 
 
