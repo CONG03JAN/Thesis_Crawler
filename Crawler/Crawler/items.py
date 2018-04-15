@@ -13,11 +13,14 @@ class CateList(scrapy.Item):
     # name = scrapy.Field()
     cateName = scrapy.Field()  # 存储美食名字
     cateUrl = scrapy.Field()  # 存储美食详情链接
+    cateID = scrapy.Field()
 
 
 class CateContent(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
+
+    cateID = scrapy.Field()
 
     # 美食详情页爬取项目
     cateName = scrapy.Field()

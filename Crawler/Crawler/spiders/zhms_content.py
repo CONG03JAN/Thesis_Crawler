@@ -1,16 +1,28 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import Crawler.items
+import pymongo
 
 
 class ZhmsContentSpider(scrapy.Spider):
     name = 'zhms_content'
     allowed_domains = ['zhms.cn']
     start_item_id = 1
-    start_url = 'http://www.zhms.cn/cp/1355/'
+
     home_url = 'http://www.zhms.cn'
     itemLimit = 6  # 定义爬取项目数
-    pageCnt = 1
+    itemCnt = 1
+
+    client = pymongo.MongoClient("localhost", 27017)
+    db = client.Thesis
+    dbCateList = db.CateList
+    nowItem = dbCateList.find_one({"cateID": itemCnt})
+
+    if nowItem:
+        start_url = nowItem['cateUrl']
+    else:
+        start_url = "http://www.zhms.cn/cp/28/"
+
     print("\033[0;32m\t [ ------------ 爬虫程序启动成功 ------------ ] \033[0m")
     print("\n 爬取项目目标: " + str(itemLimit) + "\n\n")
 
@@ -38,7 +50,8 @@ class ZhmsContentSpider(scrapy.Spider):
         cateMakeUrls = response.xpath(cateMakeUrlsRegx).extract()
 
         CateContent = Crawler.items.CateContent()
-        NoneUrl = ''
+
+        CateContent['cateID'] = self.itemCnt
 
         if cateName:
             CateContent['cateName'] = cateName[0]
@@ -61,13 +74,29 @@ class ZhmsContentSpider(scrapy.Spider):
             pass
 
         if cateMakeUrls:
-            cateMakeUrl = cateMakeUrls[0]
+            cateMakeUrl = self.home_url + cateMakeUrls[0]
             yield scrapy.Request(
                 url=cateMakeUrl,
                 meta={'item': CateContent},
                 callback=self.cateMake_parse)
         else:
             yield CateContent
+            self.itemCnt += 1
+            if self.itemCnt < self.itemLimit:
+                nowItem = self.dbCateList.find_one({"cateID": self.itemCnt})
+                while True:
+                    if nowItem:
+                        break
+                    else:
+                        self.itemCnt += 1
+                        nowItem = self.dbCateList.find_one({
+                            "cateID":
+                            self.itemCnt
+                        })
+                nextItemUrl = nowItem['cateUrl']
+                print("---------------------")
+                print(type(nextItemUrl))
+                yield scrapy.Request(nextItemUrl, callback=self.cateInfo_parse)
 
         print("\n")
 
@@ -104,9 +133,16 @@ class ZhmsContentSpider(scrapy.Spider):
 
         if mainMaterials:
             mainMaterial = ""
-            for it in mainMaterial:
+            for it in mainMaterials:
                 s = it.xpath(".//text()").extract()
-                mainMaterial += " ".join(s)
+                if s:
+                    mainMaterial += " ".join(s)
+                else:
+                    if mainMaterial:
+                        pass
+                    else:
+                        mainMaterial = "None"
+                    break
             CateContent['mainMaterial'] = mainMaterial
         else:
             CateContent['mainMaterial'] = "None"
@@ -115,7 +151,14 @@ class ZhmsContentSpider(scrapy.Spider):
             othersMaterial = ""
             for it in othersMaterials:
                 s = it.xpath(".//text()").extract()
-                othersMaterial += " ".join(s)
+                if s:
+                    othersMaterial += " ".join(s)
+                else:
+                    if othersMaterial:
+                        pass
+                    else:
+                        othersMaterial = "None"
+                    break
             CateContent['othersMaterial'] = othersMaterial
         else:
             CateContent['othersMaterial'] = "None"
@@ -124,15 +167,43 @@ class ZhmsContentSpider(scrapy.Spider):
             makeStep = ""
             for it in makeSteps:
                 s = it.xpath("./h2/text()").extract()
-                makeStep += "\n".join(s)
+                if s:
+                    makeStep += "\n".join(s)
+                else:
+                    if makeStep:
+                        pass
+                    else:
+                        makeStep = "None"
+                    break
                 s = it.xpath("./h3/text()").extract()
-                makeStep += "\n".join(s)
+                if s:
+                    makeStep += "\n".join(s)
+                else:
+                    if makeStep:
+                        pass
+                    else:
+                        makeStep = "None"
+                    break
+            CateContent['makeStep'] = makeStep
         else:
             CateContent['makeStep'] = "None"
 
         print("\n")
 
         yield CateContent
+        self.itemCnt += 1
+        if self.itemCnt < self.itemLimit:
+            nowItem = self.dbCateList.find_one({"cateID": self.itemCnt})
+            while True:
+                if nowItem:
+                    break
+                else:
+                    self.itemCnt += 1
+                    nowItem = self.dbCateList.find_one({
+                        "cateID": self.itemCnt
+                    })
+            nextItemUrl = nowItem['cateUrl']
+            yield scrapy.Request(nextItemUrl, callback=self.cateInfo_parse)
 
     def parse(self, response):
         pass

@@ -11,6 +11,7 @@ class ZhmsSpider(scrapy.Spider):
     home_url = 'http://www.zhms.cn'
     pageLimit = 3   # 定义爬取页面数
     pageCnt = 1
+    itemCnt = 1
     print("\033[0;32m\t [ ------------ 爬虫程序启动成功 ------------ ] \033[0m")
     print("\n 爬取页面目标: " + str(pageLimit) + "\n\n")
 
@@ -36,11 +37,13 @@ class ZhmsSpider(scrapy.Spider):
             if cateName and cateUrl:
                 # 构造存储数据的 CateList Item
                 CateList = Crawler.items.CateList()
+                CateList['cateID'] = self.itemCnt
+                self.itemCnt += 1
                 CateList['cateName'] = cateName
                 CateList['cateUrl'] = self.home_url + cateUrl
                 yield CateList
 
-        print("\n")
+        print("\n\033[0;32m\t [ ------------ 已爬取项目数：" + str(self.itemCnt) + " ------------ ] \033[0m\n")
 
         # 获取下一页的链接并加入待爬取列表
         nextUrls = response.xpath(nextUrlRegx).extract()

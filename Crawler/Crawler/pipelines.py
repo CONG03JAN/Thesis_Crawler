@@ -22,10 +22,12 @@ class CrawlerPipeline(object):
 
 class JsonPipleline(object):
     def __init__(self):
-        self.fp = codecs.open('CateList.json', 'w', encoding='utf-8')
+        pass
 
     def process_item(self, item, spider):
         """ 判断item的类型，并作相应的处理 """
+
+        self.fp = codecs.open('CateList.json', 'w', encoding='utf-8')
 
         if isinstance(item, Crawler.items.CateList):
             try:
@@ -63,6 +65,7 @@ class MongoDBPipleline(object):
             # 美食列表数据存储
             try:
                 self.CateList.insert(dict(item))
+                print("\n数据项：" + item['cateName'] + " 存储成功")
             except Exception:
                 pass
         elif isinstance(item, Crawler.items.CateContent):
@@ -79,12 +82,16 @@ class ImgPipeline(ImagesPipeline):
     """ 图片存储管道定义 """
 
     def get_media_requests(self, item, info):
-        for image_url in item['image_urls']:
-            yield scrapy.Request(image_url)
+        if isinstance(item, Crawler.items.CateContent):
+            yield scrapy.Request(item['image_urls'])
 
     def item_completed(self, results, item, info):
-        image_paths = [x['path'] for ok, x in results if ok]  # ok判断是否下载成功
-        if not image_paths:
-            raise DropItem("Item contains no images")
-        item['image_paths'] = image_paths
-        return item
+        if isinstance(item, Crawler.items.CateContent):
+            image_paths = [x['path'] for ok, x in results if ok]  # ok判断是否下载成功
+            if not image_paths:
+                raise DropItem("Item contains no images")
+            if image_paths:
+                item['image_paths'] = image_paths[0]
+            else:
+                item['image_paths'] = "None"
+            return item
