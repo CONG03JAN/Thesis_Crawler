@@ -43,7 +43,7 @@ def getProxyIP(num):
 def checkProxyIP(proxyIP):
     """ 检测代理IP地址是否有效 """
 
-    testUrl = 'http://ip.chinaz.com/getip.aspx'
+    testUrl = 'http://www.zhms.cn/'
 
     try:
         res = requests.get(testUrl, proxies={"http": proxyIP}, timeout=1.5)
