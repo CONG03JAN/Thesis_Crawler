@@ -75,7 +75,6 @@ def text_reply(msg):
             else:
                 sendMsg("很抱歉我们的制作菜谱里没有这道菜 ^_^ \n", user, 1)
 
-
         # 非法信息
         else:
             sendMsg("您好，亲爱的:\n" + startString, user, 1)

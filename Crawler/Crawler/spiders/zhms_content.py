@@ -10,7 +10,7 @@ class ZhmsContentSpider(scrapy.Spider):
     start_item_id = 1
 
     home_url = 'http://www.zhms.cn'
-    itemLimit = 16 * 6690  # 定义爬取项目数
+    itemLimit = 16 * 1  # 定义爬取项目数
     itemCnt = start_item_id
 
     client = pymongo.MongoClient("localhost", 27017)
@@ -136,7 +136,7 @@ class ZhmsContentSpider(scrapy.Spider):
             for it in mainMaterials:
                 s = it.xpath(".//text()").extract()
                 if s:
-                    mainMaterial += " ".join(s)
+                    mainMaterial += "".join(s) + "; "
                 else:
                     if mainMaterial:
                         pass
@@ -152,7 +152,7 @@ class ZhmsContentSpider(scrapy.Spider):
             for it in othersMaterials:
                 s = it.xpath(".//text()").extract()
                 if s:
-                    othersMaterial += " ".join(s)
+                    othersMaterial += "".join(s) + "; "
                 else:
                     if othersMaterial:
                         pass
@@ -166,25 +166,25 @@ class ZhmsContentSpider(scrapy.Spider):
         if makeSteps:
             makeStep = ""
             for it in makeSteps:
-                s = it.xpath("./h2/text()").extract()
+                s = it.xpath("./h2//text()").extract()
                 if s:
-                    makeStep += "\n".join(s)
+                    makeStep += "".join(s)
                 else:
                     if makeStep:
                         pass
                     else:
                         makeStep = "None"
                     break
-                s = it.xpath("./h3/text()").extract()
+                s = it.xpath("./h3//text()").extract()
                 if s:
-                    makeStep += "\n".join(s)
+                    makeStep += "".join(s)
                 else:
                     if makeStep:
                         pass
                     else:
                         makeStep = "None"
                     break
-            CateContent['makeStep'] = makeStep
+            CateContent['makeStep'] = makeStep.replace("第", "\n第")
         else:
             CateContent['makeStep'] = "None"
 
