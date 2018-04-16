@@ -9,7 +9,7 @@ class ZhmsSpider(scrapy.Spider):
     start_page_num = '1'
     start_url = 'http://www.zhms.cn/cp/_1_' + start_page_num
     home_url = 'http://www.zhms.cn'
-    pageLimit = 3   # 定义爬取页面数
+    pageLimit = 6690   # 定义爬取页面数
     pageCnt = 1
     itemCnt = 1
     print("\033[0;32m\t [ ------------ 爬虫程序启动成功 ------------ ] \033[0m")

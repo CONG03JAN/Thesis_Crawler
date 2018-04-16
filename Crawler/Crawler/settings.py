@@ -69,8 +69,8 @@ DOWNLOADER_MIDDLEWARES = {
 ITEM_PIPELINES = {
     'Crawler.pipelines.CrawlerPipeline': 300,
     # 'Crawler.pipelines.JsonPipleline': 400,
-    'Crawler.pipelines.MongoDBPipleline': 400,
-    'Crawler.pipelines.ImgPipeline': 500,
+    'Crawler.pipelines.MongoDBPipleline': 900,
+    'Crawler.pipelines.ImgPipeline': 100,
 }
 
 IMAGES_STORE = './Images'
