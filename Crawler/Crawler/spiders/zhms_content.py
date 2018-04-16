@@ -10,7 +10,7 @@ class ZhmsContentSpider(scrapy.Spider):
     start_item_id = 1
 
     home_url = 'http://www.zhms.cn'
-    itemLimit = 107040  # 定义爬取项目数
+    itemLimit = 16 * 3  # 定义爬取项目数
     itemCnt = 1
 
     client = pymongo.MongoClient("localhost", 27017)
