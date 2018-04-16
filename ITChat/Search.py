@@ -8,6 +8,31 @@ db = client.Thesis
 dbCateList = db.CateList
 dbCateContent = db.CateContent
 
+def getInfoByName(inString):
+    """ 通过关键字精确搜索数据库 """
+
+    cateList = dbCateList.find()
+    collection = cateList
+
+    pattern = inString + '.*?'
+    regex = re.compile(pattern)
+
+    resultID = 0
+
+    for item in collection:
+        match = regex.search(item['cateName'])
+        if match:
+            resultID = item['cateID']
+            break
+        else:
+            pass
+
+    if resultID == 0:
+        return None
+    else:
+        result = getInfoById(resultID)
+        return result
+
 
 def getSuggestionsByName(inString, itemLimit=10):
     """ 通过关键字模糊搜索数据库 """

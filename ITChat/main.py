@@ -49,19 +49,33 @@ def text_reply(msg):
                     sendString += cateInfo
                     sendString += '\n'
                     sendMsg(sendString, user, 1)
-                    if cateContent:
+                    if cateContent and cateContent['image_paths']:
                         sendString = "./" + cateContent['image_paths']
                         print(sendString)
                         sendMsg(sendString, user, 0)
 
                 print(sendString)
-
             else:
                 sendMsg("很抱歉我们的菜谱里没有这道菜 ^_^ \n", user, 1)
             pass
+
         # 美食做法信息
         elif msgContent[0:2] == "做法":
-            pass
+            msgKey = msgContent[3:]
+            cateContent = Search.getInfoByName(msgKey)
+            if cateContent:
+                sendString = ""
+                sendMsg(msgKey + "的做法: \n", user, 1)
+                sendString += "准备时间: " + cateContent['prepareTime'] + '\n'
+                sendString += "完成时间: " + cateContent['accomplishTime'] + '\n'
+                sendString += "主料: " + cateContent['mainMaterial'] + '\n'
+                sendString += "辅料: " + cateContent['othersMaterial'] + '\n'
+                sendString += "具体步骤: " + cateContent['makeStep']
+                sendMsg(sendString, user, 1)
+            else:
+                sendMsg("很抱歉我们的制作菜谱里没有这道菜 ^_^ \n", user, 1)
+
+
         # 非法信息
         else:
             sendMsg("您好，亲爱的:\n" + startString, user, 1)
