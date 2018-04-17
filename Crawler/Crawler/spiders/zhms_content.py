@@ -7,7 +7,7 @@ import pymongo
 class ZhmsContentSpider(scrapy.Spider):
     name = 'zhms_content'
     allowed_domains = ['zhms.cn']
-    start_item_id = 1
+    start_item_id = 4588
 
     home_url = 'http://www.zhms.cn'
     itemLimit = 16 * 1  # 定义爬取项目数
