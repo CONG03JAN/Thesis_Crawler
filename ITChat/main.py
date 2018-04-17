@@ -3,7 +3,6 @@ import re
 import itchat
 import Search
 
-
 client = pymongo.MongoClient("localhost", 27017)
 db = client.Thesis
 dbCateList = db.CateList
@@ -37,13 +36,14 @@ def text_reply(msg):
                     sendString += "美食名: " + cateName
                     sendString += '\n'
                     cateInfo = ""
-                    cateStar = "★ "
+                    cateStar = ""
                     cateContent = Search.getInfoById(cateID)
                     if cateContent:
                         cateInfo = "美食介绍: " + cateContent['cateInfo']
                         cateStar = "美食评星: "
-                        for i in range(cateContent['cateStar']):
-                            cateStar += "★ "
+                        if cateContent['cateStar'] > 0:
+                            for i in range(cateContent['cateStar']):
+                                cateStar += "★ "
                     sendString += cateStar
                     sendString += '\n'
                     sendString += cateInfo
@@ -79,8 +79,9 @@ def text_reply(msg):
         else:
             sendMsg("您好，亲爱的:\n" + startString, user, 1)
         print("消息发送成功 ！！！")
-    except:
+    except Exception as e:
         print("消息发送失败 ！！！")
+        print('Reason:', e)
     #return msg.text
 
 

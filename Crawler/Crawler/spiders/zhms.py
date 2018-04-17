@@ -2,6 +2,8 @@
 import scrapy
 import Crawler.items
 
+PAGELIMIT = 6690
+
 
 class ZhmsSpider(scrapy.Spider):
     name = 'zhms'
@@ -9,9 +11,10 @@ class ZhmsSpider(scrapy.Spider):
     start_page_num = '1'
     start_url = 'http://www.zhms.cn/cp/_1_' + start_page_num
     home_url = 'http://www.zhms.cn'
-    pageLimit = 6690   # 定义爬取页面数
+    pageLimit = PAGELIMIT  # 定义爬取页面数
     pageCnt = 1
     itemCnt = 1
+
     print("\033[0;32m\t [ ------------ 爬虫程序启动成功 ------------ ] \033[0m")
     print("\n 爬取页面目标: " + str(pageLimit) + "\n\n")
 
@@ -37,18 +40,24 @@ class ZhmsSpider(scrapy.Spider):
             if cateName and cateUrl:
                 # 构造存储数据的 CateList Item
                 CateList = Crawler.items.CateList()
+
+                # 美食 ID
                 CateList['cateID'] = self.itemCnt
                 self.itemCnt += 1
+
+                # 美食名
                 CateList['cateName'] = cateName
+
+                # 美食详情 URL
                 CateList['cateUrl'] = self.home_url + cateUrl
                 yield CateList
 
-        print("\n\033[0;32m\t [ ------------ 已爬取项目数：" + str(self.itemCnt) + " ------------ ] \033[0m\n")
+        print("\n\033[0;32m\t [ ------------ 已爬取项目数：" + str(self.itemCnt) +
+              " ------------ ] \033[0m\n")
 
-        # 获取下一页的链接并加入待爬取列表
+        # 获取下一页的链接并加入待爬取列表，并限定爬取页面数
         nextUrls = response.xpath(nextUrlRegx).extract()
         if nextUrls and self.pageCnt < self.pageLimit:
-            # 只爬取指定数目的页面
             self.pageCnt += 1
             nextUrl = self.home_url + nextUrls[0]
             yield scrapy.Request(nextUrl, callback=self.cateList_parse)

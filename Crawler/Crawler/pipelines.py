@@ -72,6 +72,7 @@ class MongoDBPipleline(object):
             # 美食详情数据存储
             try:
                 self.CateContent.insert(dict(item))
+                print("\n数据项：" + item['cateName'] + " 存储成功")
             except Exception:
                 pass
 
