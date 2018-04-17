@@ -34,7 +34,7 @@ def getInfoByName(inString):
         return result
 
 
-def getSuggestionsByName(inString, itemLimit=10):
+def getSuggestionsByName(inString, itemLimit=5):
     """ 通过关键字模糊搜索数据库 """
 
     suggestions = []  # 搜索建议列表
@@ -43,6 +43,7 @@ def getSuggestionsByName(inString, itemLimit=10):
     collection = cateList
 
     regxString = inString.split(" ")  # 空格分割关键字
+    print(regxString)
 
     # pattern = '.*?'.join(regxString)  # 转换 'key word' to 'key.*?word'
     # regex = re.compile(pattern)  # 编译正则匹配表达式
@@ -51,19 +52,27 @@ def getSuggestionsByName(inString, itemLimit=10):
     itemCnt = 1
 
     for key in regxString:
-        pattern = '.*?' + key + '.*?'
+        pattern = '.*?'.join(key)
         regex = re.compile(pattern)
+        matchTmp = []
         for item in collection:
             match = regex.search(item['cateName'])
-        collection = match
+            if match:
+                matchTmp.append(item)
+        collection = matchTmp
 
-    for item in collection:
-        cateName = clearData(item['cateName'])
-        result = (item['cateID'], cateName)
-        if itemCnt > itemLimit:
-            break
-        else:
-            itemCnt += 1
+    print("collection: \n")
+    print(collection)
+
+    if collection:
+        for item in collection:
+            cateName = clearData(item['cateName'])
+            result = (item['cateID'], cateName)
+            suggestions.append(result)
+            if itemCnt > itemLimit:
+                break
+            else:
+                itemCnt += 1
 
     return suggestions
 
