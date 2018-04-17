@@ -60,6 +60,12 @@ class ProxyMiddleware(object):
             self.load_proxy_list()
             ip = random.choice(self.proxy_list)
             proxy = "HTTP://" + ip['IP'] + ":" + ip['Port']
+            while Tools.ProxyIP.checkProxyIP(proxy) is False:
+                Tools.ProxyIP.getProxyIP(10)
+                self.proxy_list = []
+                self.load_proxy_list()
+                ip = random.choice(self.proxy_list)
+                proxy = "HTTP://" + ip['IP'] + ":" + ip['Port']
         else:
             print("\n\033[0;32m\t [ ------------ 代理IP " + str(ip) +
                   " 连接成功 ------------ ] \033[0m\n")
