@@ -44,26 +44,26 @@ def getSuggestionsByName(inString, itemLimit=10):
 
     regxString = inString.split(" ")  # 空格分割关键字
 
-    pattern = '.*?'.join(regxString)  # 转换 'key word' to 'key.*?word'
-    regex = re.compile(pattern)  # 编译正则匹配表达式
+    # pattern = '.*?'.join(regxString)  # 转换 'key word' to 'key.*?word'
+    # regex = re.compile(pattern)  # 编译正则匹配表达式
 
     # 匹配
     itemCnt = 1
 
+    for key in regxString:
+        pattern = '.*?' + key + '.*?'
+        regex = re.compile(pattern)
+        for item in collection:
+            match = regex.search(item['cateName'])
+        collection = match
+
     for item in collection:
-        match = regex.search(
-            item['cateName'])
-        if match:
-            cateName = clearData(item['cateName'])
-            # cateName = item['cateName']
-            result = (item['cateID'], cateName)
-            suggestions.append(result)
-            if itemCnt > itemLimit:
-                break
-            else:
-                itemCnt += 1
+        cateName = clearData(item['cateName'])
+        result = (item['cateID'], cateName)
+        if itemCnt > itemLimit:
+            break
         else:
-            pass
+            itemCnt += 1
 
     return suggestions
 
