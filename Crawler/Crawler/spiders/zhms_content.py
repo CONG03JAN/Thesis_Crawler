@@ -2,25 +2,22 @@
 import scrapy
 import Crawler.items
 import pymongo
-import Crawler.spiders.zhms
 
 
 class ZhmsContentSpider(scrapy.Spider):
     name = 'zhms_content'
     allowed_domains = ['zhms.cn']
-    start_item_id = 1  # 爬虫开始爬取的项目号
+    start_item_id = 1
 
     home_url = 'http://www.zhms.cn'
-    itemLimit = 16 * Crawler.spiders.zhms.PAGELIMIT  # 定义爬取项目数
+    itemLimit = 16 * 1  # 定义爬取项目数
     itemCnt = start_item_id
 
-    # 连接数据库
     client = pymongo.MongoClient("localhost", 27017)
     db = client.Thesis
     dbCateList = db.CateList
     nowItem = dbCateList.find_one({"cateID": itemCnt})
 
-    # 避免开始爬取的项目号对应项目不存在
     if nowItem:
         start_url = nowItem['cateUrl']
     else:
@@ -52,37 +49,30 @@ class ZhmsContentSpider(scrapy.Spider):
         image_urls = response.xpath(image_urlsRegx).extract()
         cateMakeUrls = response.xpath(cateMakeUrlsRegx).extract()
 
-        # 构造 CateContent Item 实例
         CateContent = Crawler.items.CateContent()
 
-        # 向 Item 实例中存储数据
         CateContent['cateID'] = self.itemCnt
 
-        # 美食名字
         if cateName:
             CateContent['cateName'] = cateName[0]
         else:
             CateContent['cateName'] = "None"
 
-        # 美食评星
         if cateStar:
             CateContent['cateStar'] = len(cateStar)
         else:
             CateContent['cateStar'] = -1
 
-        # 美食介绍
         if cateInfo:
             CateContent['cateInfo'] = "".join(cateInfo)
         else:
             CateContent['cateInfo'] = "None"
 
-        # 美食图片 URL
         if image_urls:
             CateContent['image_urls'] = image_urls[0].split('?', 1)[0]
         else:
             pass
 
-        # 爬取第二级美食制作页面：若存在则爬取并传递数据，否则直接返回已获取的数据
         if cateMakeUrls:
             cateMakeUrl = self.home_url + cateMakeUrls[0]
             yield scrapy.Request(
@@ -129,23 +119,18 @@ class ZhmsContentSpider(scrapy.Spider):
         othersMaterials = response.xpath(othersMaterialsRegx)
         makeSteps = response.xpath(makeStepsRegx)
 
-        # 获取上一级传递的 Item 实例
         CateContent = response.meta['item']
 
-        # 向 Item 实例中存储数据
-        # 准备时间
         if prepareTime:
             CateContent['prepareTime'] = prepareTime[0]
         else:
             CateContent['prepareTime'] = "None"
 
-        # 完成时间
         if accomplishTime:
             CateContent['accomplishTime'] = accomplishTime[0]
         else:
             CateContent['accomplishTime'] = "None"
 
-        # 主要食材
         if mainMaterials:
             mainMaterial = ""
             for it in mainMaterials:
@@ -162,7 +147,6 @@ class ZhmsContentSpider(scrapy.Spider):
         else:
             CateContent['mainMaterial'] = "None"
 
-        # 辅料
         if othersMaterials:
             othersMaterial = ""
             for it in othersMaterials:
@@ -179,7 +163,6 @@ class ZhmsContentSpider(scrapy.Spider):
         else:
             CateContent['othersMaterial'] = "None"
 
-        # 制作步骤
         if makeSteps:
             makeStep = ""
             for it in makeSteps:
@@ -207,10 +190,7 @@ class ZhmsContentSpider(scrapy.Spider):
 
         print("\n")
 
-        # 返回 Item 实例
         yield CateContent
-
-        # 限定爬取 Item 数量，获取下一个爬取项目的 URL，构造 Request
         self.itemCnt += 1
         if self.itemCnt < self.itemLimit:
             nowItem = self.dbCateList.find_one({"cateID": self.itemCnt})

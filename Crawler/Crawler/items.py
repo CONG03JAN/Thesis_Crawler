@@ -13,27 +13,27 @@ class CateList(scrapy.Item):
     # name = scrapy.Field()
     cateName = scrapy.Field()  # 存储美食名字
     cateUrl = scrapy.Field()  # 存储美食详情链接
-    cateID = scrapy.Field()  # 美食 ID
+    cateID = scrapy.Field()
 
 
 class CateContent(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
 
-    cateID = scrapy.Field()  # 美食 ID
+    cateID = scrapy.Field()
 
     # 美食详情页爬取项目
-    cateName = scrapy.Field()  # 美食名
-    cateStar = scrapy.Field()  # 美食评星
-    cateInfo = scrapy.Field()  # 美食介绍
+    cateName = scrapy.Field()
+    cateStar = scrapy.Field()
+    cateInfo = scrapy.Field()
 
     # 美食图片爬取项目
-    image_urls = scrapy.Field()  # 美食图片 URL
-    image_paths = scrapy.Field()  # 美食图片本地存储地址
+    image_urls = scrapy.Field()
+    image_paths = scrapy.Field()
 
     # 美食制作教程页爬取项目
-    prepareTime = scrapy.Field()  # 准备时间
-    accomplishTime = scrapy.Field()  # 完成时间
-    mainMaterial = scrapy.Field()  # 主要食材
-    othersMaterial = scrapy.Field()  # 辅料
-    makeStep = scrapy.Field()  # 制作步骤
+    prepareTime = scrapy.Field()
+    accomplishTime = scrapy.Field()
+    mainMaterial = scrapy.Field()
+    othersMaterial = scrapy.Field()
+    makeStep = scrapy.Field()

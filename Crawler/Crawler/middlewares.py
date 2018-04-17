@@ -18,7 +18,6 @@ class ProxyMiddleware(object):
     """ 随机更换 IP 代理 """
 
     proxy_list = []  # 代理池
-    ProxyIPNum = 10  # 每次跟新的代理数
 
     def load_proxy_list(self):
         """ 从 proxyip.json 文件中载入代理地址 """
@@ -32,17 +31,16 @@ class ProxyMiddleware(object):
     def process_request(self, request, spider):
         """ 为每一次 Request 载入一个代理IP """
 
-        self.load_proxy_list()  # 载入代理地址
+        self.load_proxy_list()
 
-        # 随机选择代理IP并格式化代理地址
         ip = random.choice(self.proxy_list)
-        proxy = "HTTP://" + ip['IP'] + ":" + ip['Port']
+        proxy = "HTTP://" + ip['IP'] + ":" + ip['Port']  # 构造代理形式
 
-        ipIsOk = True  # 标记是否超过尝试次数
+        ipIsOk = True
 
         cnt = 1
         while Tools.ProxyIP.checkProxyIP(proxy) is False:
-            if cnt > self.ProxyIPNum:
+            if cnt > 10:
                 ipIsOk = False
                 break
             else:
@@ -56,9 +54,8 @@ class ProxyMiddleware(object):
         print("\n\033[0;34m\t [ ------------ 代理IP选择尝试次数: " + str(cnt) +
               " ------------ ] \033[0m\n")
 
-        # 超过尝试次数，更新代理池，并选择一个可用代理
         if ipIsOk is False:
-            Tools.ProxyIP.getProxyIP(self.ProxyIPNum)
+            Tools.ProxyIP.getProxyIP(10)
             self.proxy_list = []
             self.load_proxy_list()
             ip = random.choice(self.proxy_list)

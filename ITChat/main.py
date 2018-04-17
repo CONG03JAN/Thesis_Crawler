@@ -37,14 +37,13 @@ def text_reply(msg):
                     sendString += "美食名: " + cateName
                     sendString += '\n'
                     cateInfo = ""
-                    cateStar = ""
+                    cateStar = "★ "
                     cateContent = Search.getInfoById(cateID)
                     if cateContent:
                         cateInfo = "美食介绍: " + cateContent['cateInfo']
                         cateStar = "美食评星: "
-                        if cateContent['cateStar'] > 0:
-                            for i in range(cateContent['cateStar']):
-                                cateStar += "★ "
+                        for i in range(cateContent['cateStar']):
+                            cateStar += "★ "
                     sendString += cateStar
                     sendString += '\n'
                     sendString += cateInfo
@@ -80,9 +79,8 @@ def text_reply(msg):
         else:
             sendMsg("您好，亲爱的:\n" + startString, user, 1)
         print("消息发送成功 ！！！")
-    except Exception as e:
+    except:
         print("消息发送失败 ！！！")
-        print('Reason:', e)
     #return msg.text
 
 
