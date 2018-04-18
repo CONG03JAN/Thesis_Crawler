@@ -24,9 +24,10 @@ def getProxyIP(num):
     response = requests.get(api)
     json_data = json.loads(response.text)
     results = json_data['msg']
+    code = json_data['code']
 
     # 检测获取的代理 IP 有效性
-    if results:
+    if results and code is '0':
         for result in results:
             ip = result['ip']
             port = result['port']
