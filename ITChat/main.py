@@ -50,7 +50,7 @@ def text_reply(msg):
                     sendString += '\n'
                     sendMsg(sendString, user, 1)
                     if cateContent and cateContent['image_paths']:
-                        sendString = "./" + cateContent['image_paths']
+                        sendString = "../data/Images/" + cateContent['image_paths']
                         print(sendString)
                         sendMsg(sendString, user, 0)
 
