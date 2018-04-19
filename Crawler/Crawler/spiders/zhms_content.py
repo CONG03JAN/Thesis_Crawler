@@ -18,6 +18,7 @@ class ZhmsContentSpider(scrapy.Spider):
     client = pymongo.MongoClient("localhost", 27017)
     db = client.Thesis
     dbCateList = db.CateList
+    dbCateContent = db.CateContent
     nowItem = dbCateList.find_one({"cateID": itemCnt})
 
     # 避免开始爬取的项目号对应项目不存在
@@ -91,26 +92,31 @@ class ZhmsContentSpider(scrapy.Spider):
                 callback=self.cateMake_parse)
         else:
             yield CateContent
-            self.itemCnt += 1
-            if self.itemCnt < self.itemLimit:
-                nowItem = self.dbCateList.find_one({"cateID": self.itemCnt})
-                while True:
-                    if nowItem:
-                        break
-                    else:
-                        self.itemCnt += 1
-                        nowItem = self.dbCateList.find_one({
-                            "cateID":
-                            self.itemCnt
-                        })
-                nextItemUrl = nowItem['cateUrl']
-                print("---------------------")
-                print(type(nextItemUrl))
-                yield scrapy.Request(nextItemUrl, callback=self.cateInfo_parse)
-
-        print("\n")
 
         # 获取下一个项目的链接并加入待爬取列表
+        self.itemCnt += 1
+        if self.itemCnt < self.itemLimit:
+            nowItem = self.dbCateList.find_one({"cateID": self.itemCnt})
+            isOver = self.dbCateContent.find_one({"cateID": self.itemCnt})
+            while True:
+                if nowItem and not isOver:
+                    break
+                elif isOver:
+                    self.itemCnt += 1
+                    nowItem = self.dbCateList.find_one({
+                        "cateID": self.itemCnt
+                    })
+                    isOver = self.dbCateContent.find_one({
+                        "cateID": self.itemCnt
+                    })
+                else:
+                    pass
+            nextItemUrl = nowItem['cateUrl']
+            # print("---------------------")
+            # print(type(nextItemUrl))
+            yield scrapy.Request(nextItemUrl, callback=self.cateInfo_parse)
+
+        print("\n")
 
     def cateMake_parse(self, response):
         """ 爬取每个美食项目的制作教程 """
