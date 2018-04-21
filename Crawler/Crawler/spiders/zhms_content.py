@@ -92,29 +92,28 @@ class ZhmsContentSpider(scrapy.Spider):
                 callback=self.cateMake_parse)
         else:
             yield CateContent
-
-        # 获取下一个项目的链接并加入待爬取列表
-        self.itemCnt += 1
-        if self.itemCnt < self.itemLimit:
-            nowItem = self.dbCateList.find_one({"cateID": self.itemCnt})
-            isOver = self.dbCateContent.find_one({"cateID": self.itemCnt})
-            while True:
-                if nowItem and not isOver:
-                    break
-                elif isOver:
-                    self.itemCnt += 1
-                    nowItem = self.dbCateList.find_one({
-                        "cateID": self.itemCnt
-                    })
-                    isOver = self.dbCateContent.find_one({
-                        "cateID": self.itemCnt
-                    })
-                else:
-                    pass
-            nextItemUrl = nowItem['cateUrl']
-            # print("---------------------")
-            # print(type(nextItemUrl))
-            yield scrapy.Request(nextItemUrl, callback=self.cateInfo_parse)
+            # 获取下一个项目的链接并加入待爬取列表
+            self.itemCnt += 1
+            if self.itemCnt < self.itemLimit:
+                nowItem = self.dbCateList.find_one({"cateID": self.itemCnt})
+                isOver = self.dbCateContent.find_one({"cateID": self.itemCnt})
+                while True:
+                    if nowItem and not isOver:
+                        break
+                    elif isOver:
+                        self.itemCnt += 1
+                        nowItem = self.dbCateList.find_one({
+                            "cateID": self.itemCnt
+                        })
+                        isOver = self.dbCateContent.find_one({
+                            "cateID": self.itemCnt
+                        })
+                    else:
+                        pass
+                nextItemUrl = nowItem['cateUrl']
+                # print("---------------------")
+                # print(type(nextItemUrl))
+                yield scrapy.Request(nextItemUrl, callback=self.cateInfo_parse)
 
         print("\n")
 
@@ -220,14 +219,20 @@ class ZhmsContentSpider(scrapy.Spider):
         self.itemCnt += 1
         if self.itemCnt < self.itemLimit:
             nowItem = self.dbCateList.find_one({"cateID": self.itemCnt})
+            isOver = self.dbCateContent.find_one({"cateID": self.itemCnt})
             while True:
-                if nowItem:
+                if nowItem and not isOver:
                     break
-                else:
+                elif isOver:
                     self.itemCnt += 1
                     nowItem = self.dbCateList.find_one({
                         "cateID": self.itemCnt
                     })
+                    isOver = self.dbCateContent.find_one({
+                        "cateID": self.itemCnt
+                    })
+                else:
+                    pass
             nextItemUrl = nowItem['cateUrl']
             yield scrapy.Request(nextItemUrl, callback=self.cateInfo_parse)
 
