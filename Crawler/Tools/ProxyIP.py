@@ -16,8 +16,8 @@ def getProxyIP(num):
     ProxyIP = []  # 存储可用代理 IP
 
     # 构造 API 地址
-    appKey = 'c7751ec600754ac4bf91c34bec4fc326'
-    api = 'http://piping.mogumiao.com/proxy/api/get_ip_bs?appKey=' + appKey + '&count=' + str(
+    appKey = '8242cd21d1274112b8dbd8793e6f4876'
+    api = 'http://piping.mogumiao.com/proxy/api/get_ip_al?appKey=' + appKey + '&count=' + str(
         num) + '&expiryDate=0&format=1'
 
     # 获取代理 IP 地址

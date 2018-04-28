@@ -40,11 +40,11 @@ class ZhmsContentSpider(scrapy.Spider):
         """ 爬取每个美食项目的介绍 """
 
         # 构造需要数据的 XPath 表达式
-        cateNameRegx = '/html/body/div[3]/div[2]/div/h1/text()'
+        cateNameRegx = '/html/body/div[4]/div[2]/div/h1/text()'
         cateStarRegx = '//i[@class="ico-star ico-star-ct"]'
-        cateInfoRegx = '/html/body/div[3]/div[2]/h2//text()'
-        image_urlsRegx = '/html/body/div[3]/div[2]/img/@src'
-        cateMakeUrlsRegx = '/html/body/div[3]/div[3]/div[1]/div[2]/ul/li/a/@href'
+        cateInfoRegx = '/html/body/div[4]/div[2]/h2//text()'
+        image_urlsRegx = '/html/body/div[4]/div[2]/img/@src'
+        cateMakeUrlsRegx = '/html/body/div[4]/div[3]/div[1]/div[2]/ul/li/a/@href'
 
         # 获取该页面所有的项目名字以及链接
         cateName = response.xpath(cateNameRegx).extract()
@@ -121,11 +121,11 @@ class ZhmsContentSpider(scrapy.Spider):
         """ 爬取每个美食项目的制作教程 """
 
         # 构造需要数据的 XPath 表达式
-        prepareTimeRegx = '/html/body/div[3]/div[2]/div[1]/div[1]/div/dl/dd[1]/span/text()'
-        accomplishTimeRegx = '/html/body/div[3]/div[2]/div[1]/div[1]/div/dl/dd[2]/span/text()'
+        prepareTimeRegx = '/html/body/div[4]/div[2]/div[1]/div[1]/div/dl/dd[1]/span/text()'
+        accomplishTimeRegx = '/html/body/div[4]/div[2]/div[1]/div[1]/div/dl/dd[2]/span/text()'
         mainMaterialsRegx = '//*[@id="mainMaterial"]/ul/li'
-        othersMaterialsRegx = '/html/body/div[3]/div[2]/div[1]/div[3]/ul/li'
-        makeStepsRegx = '/html/body/div[3]/div[2]/div[1]/div[4]/ul/li'
+        othersMaterialsRegx = '/html/body/div[4]/div[2]/div[1]/div[3]/ul/li'
+        makeStepsRegx = '/html/body/div[4]/div[2]/div[1]/div[4]/ul/li'
 
         # 获取该页面所有的项目名字以及链接
         prepareTime = response.xpath(prepareTimeRegx).extract()
