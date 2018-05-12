@@ -53,7 +53,7 @@ def getSuggestionsByName(inString, itemLimit=5):
     itemCnt = 1
 
     for key in regxString:
-        pattern = '.*?'.join(key)
+        pattern = key
         regex = re.compile(pattern)
         matchTmp = []
         for item in collection:
